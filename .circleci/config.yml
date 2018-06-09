@@ -17,7 +17,7 @@ jobs:
           - v1-dependencies-
 
       - run:
-          name: install dependencies
+          name: Install dependencies
           command: |
             python3 -m venv venv
             . venv/bin/activate
@@ -30,12 +30,12 @@ jobs:
           
 
       - run:
-          name: create test directory
+          name: Create test directory
           command: |
             mkdir -p ./results/nosetests
             
       - run:
-          name: run tests
+          name: Run tests
           command: |
             . venv/bin/activate
             nosetests -v --with-xunit --xunit-file ./results/nosetests/results.xml
