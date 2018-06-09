@@ -32,13 +32,13 @@ jobs:
       - run:
           name: create test directory
           command: |
-            mkdir ./results
+            mkdir -p ./results/nosetests
             
       - run:
           name: run tests
           command: |
             . venv/bin/activate
-            nosetests -v --with-xunit --xunit-file ./results/results.xml
+            nosetests -v --with-xunit --xunit-file ./results/nosetests/results.xml
           
       - store_test_results:
-          path: ./results
+          path: ./results/
