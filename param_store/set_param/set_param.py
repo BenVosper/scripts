@@ -73,10 +73,11 @@ class PutParameter:
         self.type = type
         self.overwrite = overwrite
 
-        if self.type not in [self.ParameterTypes.STRING,
-                             self.ParameterTypes.STRINGLIST,
-                             self.ParameterTypes.SECURESTRING]:
-            raise RuntimeError("Invalid parameter type.")
+        types = [self.ParameterTypes.STRING, self.ParameterTypes.SECURESTRING, self.ParameterTypes.STRINGLIST]
+        if self.type not in types:
+            msg = ("Invalid parameter type: {}. Specify one of: {}".format(
+                self.type, ", ".join(types)))
+            raise RuntimeError(msg)
 
     @property
     def overwrite_string(self):
@@ -101,11 +102,38 @@ class PutParameter:
     @classmethod
     def from_dict(cls, command_parameters):
         """Create an instance from a dict of the '--cli-input-json' format."""
+        if not {"Name", "Value"}.issubset(command_parameters.keys()):
+            raise RuntimeError("One or more commands missing 'Name' and/or 'Value' keys.")
         optional = {arg: command_parameters[key] for arg, key in
                     (("type", "Type"), ("overwrite", "Overwrite")) if key in command_parameters}
-        return cls(parameter=command_parameters.get("Name"),
-                   value=command_parameters.get("Value"),
+        return cls(parameter=command_parameters["Name"],
+                   value=command_parameters["Value"],
                    **optional)
+
+
+def run_commands(parameter, value, parameter_type, overwrite, input_json=None):
+    commands = []
+    if input_json:
+        commands_json = json.loads(input_json.read())
+        for command_dict in commands_json:
+            commands.append(
+                PutParameter.from_dict({
+                    "Type": parameter_type,
+                    "Overwrite": overwrite,
+                    **command_dict
+                }))
+    else:
+        commands.append(
+            PutParameter(
+                parameter,
+                value,
+                parameter_type,
+                overwrite
+            )
+        )
+
+    for command in commands:
+        command()
 
 
 if __name__ == "__main__":
@@ -118,25 +146,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    commands = []
-    if args.json:
-        commands_json = json.loads(args.json.read())
-        for command_dict in commands_json:
-            commands.append(
-                PutParameter.from_dict({
-                    "Type": args.type,
-                    "Overwrite": args.overwrite,
-                    **command_dict
-                }))
-    else:
-        commands.append(
-            PutParameter(
-                args.parameter,
-                args.value,
-                args.type,
-                args.overwrite
-            )
-        )
-
-    for command in commands:
-        command()
+    run_commands(
+        args.parameter,
+        args.value,
+        args.type,
+        args.overwrite,
+        args.json
+    )
