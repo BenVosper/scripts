@@ -6,6 +6,9 @@ Allows multiple parameters to be updated with one command. Since parameter names
 written and checked in a text-editor, the likelihood of errors resulting from typos and mis-clicks
 in the AWS UI is reduced.
 
+URLs can also be successfully used as parameter values. The default behaviour of
+'ssm put-parameter' is perform a GET on valid URLs and use the response as the value.
+
 You must have successfully run 'aws configure' before using this tool.
 
 Usage:
@@ -35,15 +38,15 @@ Usage:
 
         If "type" or "overwrite" are omitted, they default to the values set by the
         -t and -o flags.
-        
-        All special characters in values must be appropriately escaped. This includes '/'
-        in URLs.
+
+        All special characters in values must be appropriately escaped.
 """
 
 import argparse
 import json
 
 from subprocess import call
+from urllib.parse import urlparse
 
 
 class PutParameter:
@@ -67,6 +70,8 @@ class PutParameter:
         False: "--no-overwrite"
     }
 
+    cli_input_json_arg = "--cli-input-json"
+
     def __init__(self, parameter, value, type=ParameterTypes.SECURESTRING, overwrite=False):
         self.parameter = parameter
         self.value = value
@@ -84,12 +89,30 @@ class PutParameter:
         return self.overwrite_flag[self.overwrite]
 
     @property
+    def cli_input_json(self):
+        parameter_dict = {
+            "Name": self.parameter,
+            "Value": self.value,
+            "Type": self.type,
+            "Overwrite": self.overwrite
+        }
+        return json.dumps(parameter_dict)
+
+    @property
+    def value_is_url(self):
+        return bool(urlparse(self.value).netloc)
+
+    @property
     def call_args(self):
         args = self.base_command.split(" ")
-        for attribute, argument_flag in self.command_args.items():
-            args.append(argument_flag)
-            args.append(getattr(self, attribute))
-        args.append(self.overwrite_string)
+        if self.value_is_url:
+            args.append(self.cli_input_json_arg)
+            args.append(self.cli_input_json)
+        else:
+            for attribute, argument_flag in self.command_args.items():
+                args.append(argument_flag)
+                args.append(getattr(self, attribute))
+            args.append(self.overwrite_string)
         return args
 
     def __call__(self):

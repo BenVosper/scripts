@@ -24,6 +24,22 @@ class TestPutParameter(TestCase):
             "BAD"
         )
 
+    def test_cli_input_json(self):
+        """The 'cli-input-json' string is correctly formatted."""
+        expected_string = ("{\"Name\": \"foo\", "
+                           "\"Value\": \"bar\", "
+                           "\"Type\": \"SecureString\", "
+                           "\"Overwrite\": false}")
+        self.assertEqual(PutParameter(self.parameter_name, self.parameter_value).cli_input_json,
+                         expected_string)
+
+    def test_value_is_url(self):
+        """Values that are valid URLs are detected correctly."""
+        self.assertTrue(PutParameter(self.parameter_name, "http://example.com").value_is_url)
+        self.assertTrue(PutParameter(self.parameter_name, "http://example.com/path").value_is_url)
+        self.assertFalse(PutParameter(self.parameter_name, "example.com").value_is_url)
+        self.assertFalse(PutParameter(self.parameter_name, "foo").value_is_url)
+
     def test_call_args(self):
         """Call args are compiled correctly."""
         command = PutParameter(self.parameter_name, self.parameter_value)
@@ -49,6 +65,18 @@ class TestPutParameter(TestCase):
                 "--value", self.parameter_value,
                 "--type", "SecureString",
                 "--overwrite"
+            ]
+        )
+
+    def test_call_args_url(self):
+        """Call args are compiled correctly for a URL value."""
+        command = PutParameter(self.parameter_name,  "http://example.com")
+        self.assertListEqual(
+            command.call_args,
+            [
+                "aws", "ssm", "put-parameter",
+                "--cli-input-json",
+                command.cli_input_json
             ]
         )
 
