@@ -27,6 +27,7 @@ from itertools import zip_longest
 from os.path import dirname, exists
 from subprocess import run, PIPE
 
+
 class NonZeroErrorCode(Exception):
     pass
 
@@ -43,6 +44,10 @@ def grouper(iterable, n, fillvalue=None):
 
 
 class BaseCommand:
+
+    @property
+    def call_args(self):
+        raise NotImplementedError("Implemented via subclasses.")
 
     def __call__(self):
         """Run the command."""
@@ -113,10 +118,10 @@ class CompileParameters:
     def __init__(self, name_prefix):
         self.name_prefix = name_prefix
 
-    def _get_names(self, name_prefix):
+    def _get_names(self):
         parameters = []
-        first_page = DescribeParameters(name_prefix)()
-        parameters.extend(first_page.get(self.parameters_key))
+        first_page = DescribeParameters(self.name_prefix)()
+        parameters.extend(first_page.get(self.parameters_key, []))
         next_token = first_page.get(self.next_token_key, None)
         while next_token:
             results = DescribeParameters(self.name_prefix, next_token)()
@@ -135,9 +140,8 @@ class CompileParameters:
         return parameters
 
     def __call__(self):
-        names = self._get_names(self.name_prefix)
-        values = self._get_values(names)
-        return values
+        names = self._get_names()
+        return self._get_values(names)
 
 
 if __name__ == "__main__":
