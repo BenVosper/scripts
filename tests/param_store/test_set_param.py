@@ -33,44 +33,9 @@ class TestPutParameter(TestCase):
         self.assertEqual(PutParameter(self.parameter_name, self.parameter_value).cli_input_json,
                          expected_string)
 
-    def test_value_is_url(self):
-        """Values that are valid URLs are detected correctly."""
-        self.assertTrue(PutParameter(self.parameter_name, "http://example.com").value_is_url)
-        self.assertTrue(PutParameter(self.parameter_name, "http://example.com/path").value_is_url)
-        self.assertFalse(PutParameter(self.parameter_name, "example.com").value_is_url)
-        self.assertFalse(PutParameter(self.parameter_name, "foo").value_is_url)
-
     def test_call_args(self):
         """Call args are compiled correctly."""
-        command = PutParameter(self.parameter_name, self.parameter_value)
-        self.assertListEqual(
-            command.call_args,
-            [
-                "aws", "ssm", "put-parameter",
-                "--name", self.parameter_name,
-                "--value", self.parameter_value,
-                "--type", "SecureString",
-                "--no-overwrite"
-            ]
-        )
-
-    def test_call_args_overwrite_true(self):
-        """The 'overwrite' flag is respected when compiling call args."""
-        command = PutParameter(self.parameter_name, self.parameter_value, overwrite=True)
-        self.assertListEqual(
-            command.call_args,
-            [
-                "aws", "ssm", "put-parameter",
-                "--name", self.parameter_name,
-                "--value", self.parameter_value,
-                "--type", "SecureString",
-                "--overwrite"
-            ]
-        )
-
-    def test_call_args_url(self):
-        """Call args are compiled correctly for a URL value."""
-        command = PutParameter(self.parameter_name,  "http://example.com")
+        command = PutParameter(self.parameter_name,  self.parameter_value)
         self.assertListEqual(
             command.call_args,
             [

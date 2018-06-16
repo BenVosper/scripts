@@ -6,9 +6,6 @@ Allows multiple parameters to be updated with one command. Since parameter names
 written and checked in a text-editor, the likelihood of errors resulting from typos and mis-clicks
 in the AWS UI is reduced.
 
-URLs can also be successfully used as parameter values. The default behaviour of
-'ssm put-parameter' is perform a GET on valid URLs and use the response as the value.
-
 You must have successfully run 'aws configure' before using this tool.
 
 Usage:
@@ -46,29 +43,22 @@ import argparse
 import json
 
 from subprocess import call
-from urllib.parse import urlparse
 
 
 class PutParameter:
-    """An object representing a single 'aws ssm put-parameter' command."""
+    """An object representing a single 'aws ssm put-parameter' command.
 
+    We use the '--cli-input-json' argument of the command to avoid issues with using URLs as
+    values. The (questionably useful) default behaviour of 'ssm put-parameter' is to perform a GET
+    on valid URLs and use the response as the value.
+    """
+    
     class ParameterTypes:
         STRING = "String"
         STRINGLIST = "StringList"
         SECURESTRING = "SecureString"
 
     base_command = "aws ssm put-parameter"
-
-    command_args = {
-        "parameter": "--name",
-        "value": "--value",
-        "type": "--type"
-    }
-
-    overwrite_flag = {
-        True: "--overwrite",
-        False: "--no-overwrite"
-    }
 
     cli_input_json_arg = "--cli-input-json"
 
@@ -85,10 +75,6 @@ class PutParameter:
             raise RuntimeError(msg)
 
     @property
-    def overwrite_string(self):
-        return self.overwrite_flag[self.overwrite]
-
-    @property
     def cli_input_json(self):
         parameter_dict = {
             "Name": self.parameter,
@@ -99,20 +85,10 @@ class PutParameter:
         return json.dumps(parameter_dict)
 
     @property
-    def value_is_url(self):
-        return bool(urlparse(self.value).netloc)
-
-    @property
     def call_args(self):
         args = self.base_command.split(" ")
-        if self.value_is_url:
-            args.append(self.cli_input_json_arg)
-            args.append(self.cli_input_json)
-        else:
-            for attribute, argument_flag in self.command_args.items():
-                args.append(argument_flag)
-                args.append(getattr(self, attribute))
-            args.append(self.overwrite_string)
+        args.append(self.cli_input_json_arg)
+        args.append(self.cli_input_json)
         return args
 
     def __call__(self):
