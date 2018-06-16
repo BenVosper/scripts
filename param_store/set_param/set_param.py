@@ -52,7 +52,7 @@ class PutParameter:
     values. The (questionably useful) default behaviour of 'ssm put-parameter' is to perform a GET
     on valid URLs and use the response as the value.
     """
-    
+
     class ParameterTypes:
         STRING = "String"
         STRINGLIST = "StringList"
@@ -93,10 +93,7 @@ class PutParameter:
 
     def __call__(self):
         """Run the command."""
-        return_code = call(self.call_args)
-        if return_code == 0:
-            print("Success! {} = {}".format(self.parameter, self.value))
-        return return_code
+        return call(self.call_args)
 
     @classmethod
     def from_dict(cls, command_parameters):
@@ -132,7 +129,9 @@ def run_commands(parameter, value, parameter_type, overwrite, input_json=None):
         )
 
     for command in commands:
-        command()
+        return_code = command()
+        if return_code == 0:
+            print("Success! {} = {}".format(command.parameter, command.value))
 
 
 if __name__ == "__main__":
