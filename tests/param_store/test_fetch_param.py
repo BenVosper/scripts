@@ -6,7 +6,8 @@ from unittest import TestCase
 from unittest.mock import patch, Mock, PropertyMock, call
 
 from param_store.fetch_params import (grouper, BaseCommand, DescribeParameters, GetParameters,
-                                      CompileParameters, NonZeroErrorCode, NoParametersFound)
+                                      CompileParameters, write_to_file, NonZeroErrorCode,
+                                      NoParametersFound, InvalidPathError)
 
 
 class TestGrouper(TestCase):
@@ -211,3 +212,26 @@ class TestCompileParameters(TestCase):
         self.assertEqual(parameters, mock_get_values.return_value)
         mock_get_names.assert_called_once_with()
         mock_get_values.assert_called_once_with(self.names)
+
+
+class TestWriteToFile(TestCase):
+
+    @patch("param_store.fetch_params.fetch_params.exists", return_value=True)
+    def test_file_exists_error(self, _):
+        self.assertRaisesRegex(
+            InvalidPathError,
+            "already exists",
+            write_to_file,
+            {},
+            "path/file.json"
+        )
+
+    @patch("param_store.fetch_params.fetch_params.exists", return_value=False)
+    def test_file_exists_error(self, _):
+        self.assertRaisesRegex(
+            InvalidPathError,
+            "does not exist",
+            write_to_file,
+            {},
+            "path/file.json"
+        )

@@ -36,6 +36,10 @@ class NoParametersFound(Exception):
     pass
 
 
+class InvalidPathError(Exception):
+    pass
+
+
 def grouper(iterable, n, fillvalue=None):
     """Collect data into fixed-length chunks or blocks"""
     # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
@@ -144,6 +148,16 @@ class CompileParameters:
         return self._get_values(names)
 
 
+def write_to_file(data, path):
+    if exists(path):
+        raise InvalidPathError("File {} already exists".format(path))
+    elif not exists(dirname(path)):
+        raise InvalidPathError("Path {} does not exist".format(path))
+
+    with open(output_path, "w") as file:
+        json.dump(parameters, file, indent=4)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Fetch parameters from AWS Parameter Store')
     parser.add_argument('prefix', type=str)
@@ -160,15 +174,9 @@ if __name__ == "__main__":
 
     output_path = args.output
     if output_path:
-        if exists(output_path):
-            print("File {} already exists".format(output_path))
-            sys.exit(1)
-        if not exists(dirname(output_path)):
-            print("Path {} does not exist".format(output_path))
-            sys.exit(1)
-
-        with open(output_path, "w") as file:
-            json.dump(parameters, file, indent=4)
-
+        try:
+            write_to_file(parameters, output_path)
+        except InvalidPathError as error:
+            print(repr(error))
     else:
         print(parameters)
