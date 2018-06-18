@@ -7,14 +7,15 @@ Usage:
 
     Provide:
 
-        <name-filter> - The string by which to filter parameters
+        <name-prefix> - The string by which to filter parameters
 
         OPTIONAL:
-        -o <output-file> - Filename with path indicating a file in which to store the fetched parameters
-        
-    Returns an array containing the names, types and values of all parameters with 'name-filter'
-    somewhere in their names.
-    
+        -o <output-file> - Filename with path indicating a file in which to store the fetched
+                           parameters
+
+    Returns an array containing the names, types and values of all parameters with names beginning
+    with 'name-prefix'.
+
     If an output path is not provided, any results are written to stdout.
 """
 
