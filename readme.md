@@ -26,11 +26,6 @@ For example, passing the prefix `foo` would fetch parameters named `foo.A`, `foo
 
    Writes matching parameters to STDOUT.
 
-
- - `python fetch_params.py foo -o parameters.json`
-
-   Creates a file `parameters.json` to which matching parameters are written.
-
 ------------------------------------
 
 ##### [`set_param`](https://github.com/BenVosper/scripts/blob/feature/readme/param_store/set_param/set_param.py)

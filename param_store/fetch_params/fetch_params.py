@@ -25,7 +25,6 @@ import json
 import sys
 
 from itertools import zip_longest
-from os.path import dirname, exists
 from subprocess import run, PIPE
 
 
@@ -149,20 +148,9 @@ class CompileParameters:
         return self._get_values(names)
 
 
-def write_to_file(data, path):
-    if exists(path):
-        raise InvalidPathError("File {} already exists".format(path))
-    elif not exists(dirname(path)):
-        raise InvalidPathError("Path {} does not exist".format(path))
-
-    with open(output_path, "w") as file:
-        json.dump(parameters, file, indent=4)
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Fetch parameters from AWS Parameter Store')
     parser.add_argument('prefix', type=str)
-    parser.add_argument('-o', '--output', default="", type=str, help="Path to which results are saved.")
 
     args = parser.parse_args()
 
@@ -173,11 +161,4 @@ if __name__ == "__main__":
         print(repr(error))
         sys.exit(1)
 
-    output_path = args.output
-    if output_path:
-        try:
-            write_to_file(parameters, output_path)
-        except InvalidPathError as error:
-            print(repr(error))
-    else:
-        print(parameters)
+    print(json.dumps(parameters, indent=4))
