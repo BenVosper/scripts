@@ -1,8 +1,8 @@
-### Scripts
+# Scripts
 
 [![CircleCI](https://circleci.com/gh/BenVosper/scripts/tree/master.svg?style=shield)](https://circleci.com/gh/BenVosper/scripts/tree/master)
 
-#### Parameter Store
+## Parameter Store
 
 Utilities for interacting with AWS Parameter Store. `aws configure` should be run beforehand for proper operation.
 
@@ -71,6 +71,36 @@ Create a parameter or update an existing one. Can also be used with an input fil
 
 ------------------------------------
 
+## Git
+
+Utilities for interacting with git / GitHub
+
+##### Requirements
+
+ - Python 3.5 or above
+ - git
+ - conda
+
+------------------------------------
+
+##### [`bootstrap_repos`](https://github.com/BenVosper/scripts/blob/master/git/bootstrap_repos.py)
+
+Clone and update repos according to settings file.
+
+For each item in the `repos` array:
+
+ 1. Clone the repo if the named directory doesn't already exist
+ 2. If a `conda_env` key is present:
+     1. Create a new conda environment with this name if it doesn't already exist
+     2. Activate environment
+     3. Install `requirements.txt` 
+     4. Deactivate environment
+
+###### Usage
+
+ - `python bootstrap_repos.py /path/to/repos.json`
+
+------------------------------------
 
 #### Testing
 
