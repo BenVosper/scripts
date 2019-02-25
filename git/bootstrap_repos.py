@@ -55,6 +55,7 @@ if __name__ == "__main__":
     existing_directories = listdir(install_directory)
 
     for repo_dict in settings["repos"]:
+        chdir(install_directory)
         directory_name = repo_dict["directory_name"]
         print(f"Setting-up repo: {directory_name}...")
 
