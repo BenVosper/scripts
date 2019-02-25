@@ -18,7 +18,7 @@ def init_install_directory(path):
 
 
 def get_existing_conda_envs(command):
-    conda_list_command = run(command, capture_output=True, check=True)
+    conda_list_command = run(command.split(" "), capture_output=True, check=True)
     env_paths = json.loads(conda_list_command.stdout)["envs"]
     return [split(path)[-1] for path in env_paths]
 
@@ -33,11 +33,11 @@ def create_conda_env(command, packages, env_name):
 
 
 def install_python_dependencies(activate_command, env_name, pip_command, deactivate_command):
-    args = activate_command.split(" ") + [env_name]
-    args += ["&&"]
-    args += pip_command.split(" ")
-    args += ["&&"]
-    args += deactivate_command.split(" ")
+    args = activate_command + " " + env_name
+    args += " && "
+    args += pip_command
+    args += " && "
+    args += deactivate_command
     run(args, check=True, shell=True)
 
 
