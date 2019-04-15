@@ -12,17 +12,19 @@ def parse_settings(path):
 
 
 def repo_is_clean():
+    """Check if there are uncommitted changes in current working directory."""
     process = run(["git", "diff-index", "--quiet", "HEAD"])
     return process.returncode == 0
 
 
 def update_master():
+    """Pull most-recent master branch of repo in current working directory,"""
     run(["git", "fetch"])
     run(["git", "checkout", "master"])
     run(["git", "pull"])
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Bootstrap repos")
     parser.add_argument("settings", help="Path to settings JSON")
 
@@ -43,3 +45,7 @@ if __name__ == "__main__":
             continue
 
     print("All done!")
+
+
+if __name__ == "__main__":
+    main()
