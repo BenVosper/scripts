@@ -13,7 +13,7 @@ class TestBootstrapRepos(TestCase):
         install_python_dependencies("conda activate", "foo", "pip install", "conda deactivate")
 
         mock_run.assert_called_once_with(
-            ["conda", "activate", "foo", "&&", "pip", "install", "&&", "conda", "deactivate"],
+            "conda activate foo && pip install && conda deactivate",
             check=True,
             shell=True
         )
