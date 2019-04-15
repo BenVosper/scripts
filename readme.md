@@ -102,6 +102,16 @@ For each item in the `repos` array:
 
 ------------------------------------
 
+##### [`comp`](https://github.com/BenVosper/scripts/blob/master/git/comp.py) (**C**heck**O**ut **M**aster, **P**ull)
+
+For each repo in settings file, checkout most up to date master if there are no uncommitted changes.
+
+###### Usage
+
+ - `python comp.py /path/to/repos.json`
+
+------------------------------------
+
 #### Testing
 
 The test suite can be run using:
