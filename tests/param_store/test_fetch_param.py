@@ -6,8 +6,7 @@ from unittest import TestCase
 from unittest.mock import patch, Mock, PropertyMock, call
 
 from param_store.fetch_params import (grouper, BaseCommand, DescribeParameters, GetParameters,
-                                      CompileParameters, NonZeroErrorCode, NoParametersFound,
-                                      InvalidPathError)
+                                      CompileParameters, NonZeroErrorCode, NoParametersFound)
 
 
 class TestGrouper(TestCase):
@@ -83,7 +82,13 @@ class TestDescribeParameters(TestCase):
         command = DescribeParameters(self.name_prefix, self.next_token)
         self.assertEqual(
             command.call_args,
-            [*command.base_command.split(" "), command.filters_arg, "Key=Name,Values=foo", command.next_arg, self.next_token]
+            [
+                *command.base_command.split(" "),
+                command.filters_arg,
+                "Key=Name,Values=foo",
+                command.next_arg,
+                self.next_token
+            ]
         )
 
 
@@ -113,7 +118,12 @@ class TestGetParameters(TestCase):
         command = GetParameters(self.names)
         self.assertEqual(
             command.call_args,
-            [*command.base_command.split(" "), command.names_arg, self.names[0], command.decryption_arg]
+            [
+                *command.base_command.split(" "),
+                command.names_arg,
+                self.names[0],
+                command.decryption_arg
+            ]
         )
 
 

@@ -101,7 +101,8 @@ class GetParameters(BaseCommand):
         if not self.names:
             raise AssertionError("One or more parameter names must be provided.")
         elif len(self.names) > self.max_length:
-            raise AssertionError("Can't request more than {} parameters at once.".format(self.max_length))
+            msg = "Can't request more than {} parameters at once.".format(self.max_length)
+            raise AssertionError(msg)
 
     @property
     def call_args(self):

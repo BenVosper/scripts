@@ -68,7 +68,12 @@ class PutParameter:
         self.type = type
         self.overwrite = overwrite
 
-        types = [self.ParameterTypes.STRING, self.ParameterTypes.SECURESTRING, self.ParameterTypes.STRINGLIST]
+        types = [
+            self.ParameterTypes.STRING,
+            self.ParameterTypes.SECURESTRING,
+            self.ParameterTypes.STRINGLIST
+        ]
+
         if self.type not in types:
             msg = ("Invalid parameter type: {}. Specify one of: {}".format(
                 self.type, ", ".join(types)))
@@ -139,7 +144,8 @@ if __name__ == "__main__":
     parser.add_argument('-p', '--parameter', default="", type=str)
     parser.add_argument('-v', '--value', default="", type=str)
     parser.add_argument('-t', '--type', default=PutParameter.ParameterTypes.SECURESTRING, type=str)
-    parser.add_argument('-o', '--overwrite', action="store_true", help="Overwrite existing parameter")
+    parser.add_argument('-o', '--overwrite', action="store_true",
+                        help="Overwrite existing parameter")
     parser.add_argument('-j', '--json', nargs="?", type=argparse.FileType('r'))
 
     args = parser.parse_args()
