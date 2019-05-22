@@ -77,20 +77,19 @@ Utilities for interacting with git / GitHub
 
 ##### Requirements
 
- - Python 3.5 or above
  - git
  - conda
 
 ------------------------------------
 
-##### [`bootstrap_repos`](https://github.com/BenVosper/scripts/blob/master/git/bootstrap_repos.py)
+##### [`bootstrap_repos`](https://github.com/BenVosper/scripts/blob/master/git/bootstrap_repos.sh)
 
-Clone and update repos according to settings file. See [example settings](https://github.com/BenVosper/scripts/blob/master/git/repos.json).
+Clone and update repos according to settings file. See script for settings file format.
 
-For each item in the `repos` array:
+For each item in the `repos` file:
 
  1. Clone the repo if the named directory doesn't already exist
- 2. If a `conda_env` key is present:
+ 2. If a `conda_env` value is present:
      1. Create a new conda environment with this name if it doesn't already exist
      2. Activate environment
      3. Install `requirements.txt` 
@@ -98,17 +97,17 @@ For each item in the `repos` array:
 
 ###### Usage
 
- - `python bootstrap_repos.py /path/to/repos.json`
+ - `. bootstrap_repos.sh /path/to/repos.txt`
 
 ------------------------------------
 
-##### [`comp`](https://github.com/BenVosper/scripts/blob/master/git/comp.py) (**C**heck**O**ut **M**aster, **P**ull)
+##### [`comp`](https://github.com/BenVosper/scripts/blob/master/git/comp.sh) (**C**heck**O**ut **M**aster, **P**ull)
 
 For each repo in settings file, checkout most up to date master if there are no uncommitted changes.
 
 ###### Usage
 
- - `python comp.py /path/to/repos.json`
+ - `. comp.sh /path/to/repos.txt`
 
 ------------------------------------
 
