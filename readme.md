@@ -14,7 +14,7 @@ Utilities for interacting with AWS Parameter Store. `aws configure` should be ru
 
 ------------------------------------
 
-##### [`fetch_params`](https://github.com/BenVosper/scripts/blob/master/param_store/fetch_params/fetch_params.py)
+##### [`fetch_params`](https://github.com/BenVosper/scripts/blob/master/aws/fetch_params.py)
 
 Get the names and values of parameters whose names begin with a given prefix. Uses `aws ssm describe-parameters` and `get-parameters`, to compile names and values into a convenient format.
 
@@ -28,7 +28,7 @@ For example, passing the prefix `foo` would fetch parameters named `foo.A`, `foo
 
 ------------------------------------
 
-##### [`set_param`](https://github.com/BenVosper/scripts/blob/feature/readme/param_store/set_param/set_param.py)
+##### [`set_param`](https://github.com/BenVosper/scripts/blob/master/aws/set_param.py)
 
 Create a parameter or update an existing one. Can also be used with an input file to create / update multiple parameters simultaneously.
 

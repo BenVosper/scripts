@@ -5,7 +5,7 @@ from functools import wraps
 from unittest import TestCase
 from unittest.mock import patch
 
-from param_store.set_param import PutParameter, run_commands
+from aws.set_param import PutParameter, run_commands
 
 
 class TestPutParameter(TestCase):
@@ -45,7 +45,7 @@ class TestPutParameter(TestCase):
             ]
         )
 
-    @patch("param_store.set_param.set_param.call")
+    @patch("aws.set_param.call")
     def test_call(self, mock_call):
         """Calling the command calls 'subprocess.call' with correct args."""
         command = PutParameter(self.parameter_name, self.parameter_value)

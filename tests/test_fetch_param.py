@@ -5,8 +5,10 @@ from subprocess import PIPE
 from unittest import TestCase
 from unittest.mock import patch, Mock, PropertyMock, call
 
-from param_store.fetch_params import (grouper, BaseCommand, DescribeParameters, GetParameters,
-                                      CompileParameters, NonZeroErrorCode, NoParametersFound)
+from aws.fetch_params import (
+    grouper, BaseCommand, DescribeParameters, GetParameters, CompileParameters, NonZeroErrorCode,
+    NoParametersFound
+)
 
 
 class TestGrouper(TestCase):
@@ -33,7 +35,7 @@ def patch_run(return_code=0, json_bytes_response=None):
         type(mock_response).stdout = PropertyMock(return_value=json_bytes_response)
 
         @wraps(func)
-        @patch("param_store.fetch_params.fetch_params.run", return_value=mock_response)
+        @patch("aws.fetch_params.run", return_value=mock_response)
         def patched(*args, **kwargs):
             func(*args, **kwargs)
         return patched
