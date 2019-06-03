@@ -71,6 +71,19 @@ Create a parameter or update an existing one. Can also be used with an input fil
 
 ------------------------------------
 
+##### [`get_ecs_url`](https://github.com/BenVosper/scripts/blob/master/aws/get_ecs_url.py)
+
+Get the private DNS of an ECS instance for a given cluster and service.
+
+###### Usage
+
+ - `python get_ecs_url.py foo bar`
+
+   This would return the URL of the first ECS instance for the first running task of the service
+   whose name contained 'bar' in the cluster whose name contained 'foo'.
+
+------------------------------------
+
 ## Git
 
 Utilities for interacting with git / GitHub
