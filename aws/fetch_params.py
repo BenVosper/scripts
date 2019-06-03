@@ -9,14 +9,8 @@ Usage:
 
         <name-prefix> - The string by which to filter parameters
 
-        OPTIONAL:
-        -o <output-file> - Filename with path indicating a file in which to store the fetched
-                           parameters
-
     Returns an array containing the names, types and values of all parameters with names beginning
     with 'name-prefix'.
-
-    If an output path is not provided, any results are written to stdout.
 """
 
 
@@ -25,11 +19,8 @@ import json
 import sys
 
 from itertools import zip_longest
-from subprocess import run, PIPE
 
-
-class NonZeroErrorCode(Exception):
-    pass
+from common import BaseCommand, NonZeroErrorCode
 
 
 class NoParametersFound(Exception):
@@ -45,20 +36,6 @@ def grouper(iterable, n, fillvalue=None):
     # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
     args = [iter(iterable)] * n
     return zip_longest(*args, fillvalue=fillvalue)
-
-
-class BaseCommand:
-
-    @property
-    def call_args(self):
-        raise NotImplementedError("Implemented via subclasses.")
-
-    def __call__(self):
-        """Run the command."""
-        completed_process = run(self.call_args, stdout=PIPE)
-        if completed_process.returncode != 0:
-            raise NonZeroErrorCode(completed_process.returncode)
-        return json.loads(completed_process.stdout.decode())
 
 
 class DescribeParameters(BaseCommand):

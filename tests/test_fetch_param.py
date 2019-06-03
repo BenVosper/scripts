@@ -1,13 +1,9 @@
-import json
-
-from functools import wraps
-from subprocess import PIPE
 from unittest import TestCase
-from unittest.mock import patch, Mock, PropertyMock, call
+from unittest.mock import patch, call
 
+from tests.test_common import patch_command
 from aws.fetch_params import (
-    grouper, BaseCommand, DescribeParameters, GetParameters, CompileParameters, NonZeroErrorCode,
-    NoParametersFound
+    grouper, DescribeParameters, GetParameters, CompileParameters, NoParametersFound
 )
 
 
@@ -23,46 +19,6 @@ class TestGrouper(TestCase):
         )
         self.assertListEqual(
             [*grouper("", 2)], []
-        )
-
-
-def patch_run(return_code=0, json_bytes_response=None):
-    json_bytes_response = json_bytes_response or json.dumps({}).encode()
-
-    def decorator(func):
-        mock_response = Mock()
-        type(mock_response).returncode = PropertyMock(return_value=return_code)
-        type(mock_response).stdout = PropertyMock(return_value=json_bytes_response)
-
-        @wraps(func)
-        @patch("aws.fetch_params.run", return_value=mock_response)
-        def patched(*args, **kwargs):
-            func(*args, **kwargs)
-        return patched
-    return decorator
-
-
-class TestBaseCommand(TestCase):
-
-    response_dict = {"foo": "bar"}
-    json_bytes_response = json.dumps(response_dict).encode()
-
-    @patch.object(BaseCommand, "call_args")
-    @patch_run(return_code=0, json_bytes_response=json_bytes_response)
-    def test_call(self, mock_run, mock_call_args):
-        """Calling the command calls 'run' with 'call_args'."""
-        response = BaseCommand()()
-        self.assertEqual(response, self.response_dict)
-        self.assertEqual(mock_run.call_args_list, [call(mock_call_args, stdout=PIPE)])
-
-    @patch.object(BaseCommand, "call_args")
-    @patch_run(return_code=1, json_bytes_response=json_bytes_response)
-    def test_call_error(self, mock_run, _):
-        """Calling the command raises an error if 'run' returns a non-zero error code."""
-        self.assertRaisesRegex(
-            NonZeroErrorCode,
-            "1",
-            BaseCommand()
         )
 
 
@@ -127,24 +83,6 @@ class TestGetParameters(TestCase):
                 command.decryption_arg
             ]
         )
-
-
-def patch_command(command_class, response):
-    """Patch calls to 'command_class.
-
-    Successive calls can be emulated by passing 'response' as a list.
-    """
-    if not isinstance(response, list):
-        response = [response]
-
-    def decorator(func):
-        @wraps(func)
-        @patch.object(command_class, "__call__", side_effect=response)
-        @patch.object(command_class, "__init__", return_value=None)
-        def patched(*args, **kwargs):
-            func(*args, **kwargs)
-        return patched
-    return decorator
 
 
 def _get_describe_parameters_response(names, next_token=None):
