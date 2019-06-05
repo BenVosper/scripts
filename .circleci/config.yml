@@ -43,7 +43,8 @@ jobs:
           name: Run tests
           command: |
             . venv/bin/activate
-            nosetests -v --with-xunit --xunit-file ./results/nosetests/results.xml
+            export PYTHONPATH="${PYTHONPATH}:/home/circleci/repo/aws"
+            python -m nose -v --with-xunit --xunit-file ./results/nosetests/results.xml
 
       - store_test_results:
           path: ./results/
