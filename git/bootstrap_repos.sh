@@ -26,7 +26,7 @@ CONDA_LIST_COMMAND="conda env list"
 CONDA_CREATE_COMMAND="conda create -y -n"
 CONDA_ACTIVATE_COMMAND="conda activate"
 CONDA_DEACTIVATE_COMMAND="conda deactivate"
-INITIAL_ENV_PACKAGES="python==3.6 pip"
+INITIAL_ENV_PACKAGES="pip"
 PIP_COMMAND="pip install -r requirements.txt"
 
 # =================================================================================================
@@ -38,6 +38,7 @@ bootstrap () {
     repo_url=$1
     repo_dir=$2
     conda_env=$3
+    python_version=$4
 
     if [[ ! -d "$PWD/$repo_dir" ]]; then
         echo "Cloning $repo_dir..."
@@ -55,7 +56,7 @@ bootstrap () {
         echo "Conda environment already exists: $conda_env..."
     else
         echo "Creating conda environment: $conda_env..."
-        eval "$CONDA_CREATE_COMMAND $conda_env $INITIAL_ENV_PACKAGES"
+        eval "$CONDA_CREATE_COMMAND $conda_env python==$python_version $INITIAL_ENV_PACKAGES"
     fi
 
     # Exit early if we can't find requirements file
