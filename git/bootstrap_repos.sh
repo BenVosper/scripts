@@ -32,6 +32,14 @@ INITIAL_ENV_PACKAGES="ipython"
 
 EXISTING_ENVS=$(ls -d "$VENV_DIR"/*/)
 
+
+echo_highlight () {
+  HIGHLIGHT="\033[1;92m"
+  CLEAR_HIGHLIGHT='\033[0m'
+  echo -e "${HIGHLIGHT}$1${CLEAR_HIGHLIGHT}"
+}
+
+
 bootstrap () {
     repo_url=$1
     repo_dir=$2
@@ -39,10 +47,10 @@ bootstrap () {
     python_version=$4
 
     if [[ ! -d "$PWD/$repo_dir" ]]; then
-        echo "Cloning $repo_dir..."
+        echo_highlight "Cloning $repo_dir..."
         git clone "$repo_url" "$repo_dir"
     else
-        echo "Repo directory already exists: $repo_dir..."
+        echo_highlight "Repo directory already exists: $repo_dir..."
     fi
 
     # Exit early if we don't need a conda env
@@ -51,19 +59,19 @@ bootstrap () {
     fi
 
     if grep -q "$venv_name" <<< $EXISTING_ENVS; then
-        echo "Virtual environment already exists: $venv_name..."
+        echo_highlight "Virtual environment already exists: $venv_name..."
     else
-        echo "Creating virtual environment: $venv_name..."
+        echo_highlight "Creating virtual environment: $venv_name..."
         eval "python$python_version -m venv $VENV_DIR/$venv_name"
     fi
 
     # Exit early if we can't find requirements file
     if [[ ! -e "$repo_dir/requirements.txt" ]]; then
-        echo "No requirements.txt file found in $repo_dir."
+        echo_highlight "No requirements.txt file found in $repo_dir."
         return
     fi
 
-    echo "Installing python requirements for $repo_dir..."
+    echo_highlight "Installing python requirements for $repo_dir..."
     (
         cd "$repo_dir" &&
         source "$VENV_DIR/$venv_name/bin/activate" &&
@@ -83,4 +91,6 @@ cat $1 | grep "^[^#]" | while read line; do
     bootstrap $line
 done
 
-echo "All done!"
+
+
+echo_highlight "All done!"
