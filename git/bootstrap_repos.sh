@@ -8,36 +8,34 @@
 #
 # Usage:
 #
+# Set the VENV_DIR environment variable to where you'd like your environments to live.
+#
+# Ensure that any python versions required by your repos are available on your PATH
+# and called using 'pythonX.Y'.
+#
 # In the directory into which you'd like to clone the repos, run the script with a path to your
 # repos file. This file should be a text file with a number of lines of the form:
 #
-# <Repo URL> <Directory to clone into> (<Name of conda environment to create>)
-#                                                 ^ Optional
+# <Repo URL> <Directory to clone into> (<Name of conda environment to create>) (<Python version>)
+#                                                 ^ Optional                       ^ Optional
 # Lines starting with "#" are ignored.
 #
 # For each line in the repos file, we then:
 #    1. Clone the specified repo into the given directory, if it doesn't already exist
-#    2. Create a conda env with the given name, if one doesn't already exist
+#    2. Create a venv with the given name, if one doesn't already exist
 #    3. Install python dependencies listed in requirements.txt file in each repo directory
 #
 # The commands for each of these steps can be modified for your system in the block below.
 
-CONDA_LIST_COMMAND="conda env list"
-CONDA_CREATE_COMMAND="conda create -y -n"
-CONDA_ACTIVATE_COMMAND="conda activate"
-CONDA_DEACTIVATE_COMMAND="conda deactivate"
-INITIAL_ENV_PACKAGES="pip"
-PIP_COMMAND="pip install -r requirements.txt"
-
+INITIAL_ENV_PACKAGES="ipython"
 # =================================================================================================
 
-EXISTING_ENVS=$(eval $CONDA_LIST_COMMAND | grep "^[^#]" | awk '{ print $1 }')
-
+EXISTING_ENVS=$(ls -d "$VENV_DIR"/*/)
 
 bootstrap () {
     repo_url=$1
     repo_dir=$2
-    conda_env=$3
+    venv_name=$3
     python_version=$4
 
     if [[ ! -d "$PWD/$repo_dir" ]]; then
@@ -48,15 +46,15 @@ bootstrap () {
     fi
 
     # Exit early if we don't need a conda env
-    if [[ -z "$conda_env" ]]; then
+    if [[ -z "$venv_name" ]]; then
         return
     fi
 
-    if grep -q "$conda_env" <<< $EXISTING_ENVS; then
-        echo "Conda environment already exists: $conda_env..."
+    if grep -q "$venv_name" <<< $EXISTING_ENVS; then
+        echo "Virtual environment already exists: $venv_name..."
     else
-        echo "Creating conda environment: $conda_env..."
-        eval "$CONDA_CREATE_COMMAND $conda_env python==$python_version $INITIAL_ENV_PACKAGES"
+        echo "Creating virtual environment: $venv_name..."
+        eval "python$python_version -m venv $VENV_DIR/$venv_name"
     fi
 
     # Exit early if we can't find requirements file
@@ -68,9 +66,11 @@ bootstrap () {
     echo "Installing python requirements for $repo_dir..."
     (
         cd "$repo_dir" &&
-        eval "$CONDA_ACTIVATE_COMMAND $conda_env" &&
-        eval "$PIP_COMMAND" &&
-        eval "$CONDA_DEACTIVATE_COMMAND"
+        source "$VENV_DIR/$venv_name/bin/activate" &&
+        pip install --upgrade pip
+        pip install -r requirements.txt &&
+        pip install "$INITIAL_ENV_PACKAGES"
+        deactivate
     )
 }
 
