@@ -91,7 +91,6 @@ Utilities for interacting with git / GitHub
 ##### Requirements
 
  - git
- - conda
 
 ------------------------------------
 
@@ -102,8 +101,8 @@ Clone and update repos according to settings file. See script for settings file 
 For each item in the `repos` file:
 
  1. Clone the repo if the named directory doesn't already exist
- 2. If a `conda_env` value is present:
-     1. Create a new conda environment with this name if it doesn't already exist
+ 2. If a `venv_name` value is present:
+     1. Create a new venv with this name if it doesn't already exist
      2. Activate environment
      3. Install `requirements.txt` 
      4. Deactivate environment

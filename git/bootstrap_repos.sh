@@ -16,8 +16,8 @@
 # In the directory into which you'd like to clone the repos, run the script with a path to your
 # repos file. This file should be a text file with a number of lines of the form:
 #
-# <Repo URL> <Directory to clone into> (<Name of conda environment to create>) (<Python version>)
-#                                                 ^ Optional                       ^ Optional
+# <Repo URL> <Directory to clone into> (<Name of venv to create>) (<Python version>)
+#                                                 ^ Optional       ^ Optional
 # Lines starting with "#" are ignored.
 #
 # For each line in the repos file, we then:
