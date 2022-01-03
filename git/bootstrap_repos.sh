@@ -58,7 +58,7 @@ bootstrap () {
         echo_highlight "Repo directory already exists: $repo_dir..."
     fi
 
-    # Exit early if we don't need a conda env
+    # Exit early if we don't need a venv
     if [[ -z "$venv_name" ]]; then
         return
     fi
@@ -95,7 +95,5 @@ fi
 cat $1 | grep "^[^#]" | while read line; do
     bootstrap $line
 done
-
-
 
 echo_highlight "All done!"
