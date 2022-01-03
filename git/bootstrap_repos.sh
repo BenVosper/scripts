@@ -46,6 +46,11 @@ bootstrap () {
     venv_name=$3
     python_version=$4
 
+    if [[ -z $(which "python$python_version" 2>\dev\null) ]]; then
+        echo_highlight "Python version $python_version not found. Exiting..."
+        exit
+    fi
+
     if [[ ! -d "$PWD/$repo_dir" ]]; then
         echo_highlight "Cloning $repo_dir..."
         git clone "$repo_url" "$repo_dir"
