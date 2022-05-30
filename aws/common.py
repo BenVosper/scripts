@@ -49,3 +49,27 @@ class BasePaginatedCommand(BaseCommand):
             results.extend(page[cls.results_key])
             next_token = page.get("next_token", None)
         return results
+
+
+class ListClusters(BasePaginatedCommand):
+
+    base_command = "aws ecs list-clusters"
+
+    results_key = "clusterArns"
+
+
+class ListServices(BasePaginatedCommand):
+
+    base_command = "aws ecs list-services"
+
+    results_key = "serviceArns"
+
+    def __init__(self, cluster_arn, **kwargs):
+        self.cluster_arn = cluster_arn
+        super().__init__(**kwargs)
+
+    @property
+    def call_args(self):
+        args = super().call_args
+        args += ["--cluster", self.cluster_arn]
+        return args
