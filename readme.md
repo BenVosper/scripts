@@ -71,6 +71,22 @@ Create a parameter or update an existing one. Can also be used with an input fil
 
 ------------------------------------
 
+##### [`list_ecs_services`](https://github.com/BenVosper/scripts/blob/master/aws/list_ecs_services.py)
+
+Get the names of available clusters and services.
+
+###### Usage
+
+ - `python list_ecs_services.py `
+
+   To print names of all available clusters and services
+
+ - `python list_ecs_services.py --arn`
+
+   To print full ARNs of all available clusters and services
+
+------------------------------------
+
 ##### [`get_ecs_url`](https://github.com/BenVosper/scripts/blob/master/aws/get_ecs_url.py)
 
 Get the private DNS of an ECS instance for a given cluster and service.
