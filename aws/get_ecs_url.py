@@ -11,7 +11,7 @@ Usage:
 
         <cluster> - The name of the cluster you'd like to access
 
-        <servive> - The name of the service you'd like to access
+        <service> - The name of the service you'd like to access
 
     If a service can be identified from your input parameters, the private DNS of the first ECS
     instance of the first running task associated with this service will be printed to stdout.
@@ -133,7 +133,9 @@ def match_arn(name, arns):
     matches = [arn for arn in arns if name in arn]
     if not matches:
         available = "\n".join(arns)
-        msg = f"No resource matching name {name} found. Available resources:\n{available}"
+        msg = (
+            f"No resource matching name {name} found. Available resources:\n{available}"
+        )
         raise NoResourceFound(msg)
     elif len(matches) > 1:
         available = "\n".join(matches)
@@ -174,7 +176,9 @@ def main(cluster_name, service_name):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Get ECS private DNS URL for given service")
+    parser = argparse.ArgumentParser(
+        description="Get ECS private DNS URL for given service"
+    )
     parser.add_argument("cluster", type=str)
     parser.add_argument("service", type=str)
 
