@@ -46,6 +46,11 @@ bootstrap () {
     venv_name=$3
     python_version=$4
 
+    if [[ -z $(which "uv" 2>\dev\null) ]]; then
+        echo_highlight "uv not found. Exiting..."
+        exit
+    fi
+
     if [[ -z $(which "python$python_version" 2>\dev\null) ]]; then
         echo_highlight "Python version $python_version not found. Exiting..."
         exit
@@ -67,7 +72,17 @@ bootstrap () {
         echo_highlight "Virtual environment already exists: $venv_name..."
     else
         echo_highlight "Creating virtual environment: $venv_name..."
-        eval "python$python_version -m venv $VENV_DIR/$venv_name"
+        eval "uv venv $VENV_DIR/$venv_name --python $python_version"
+    fi
+
+    if [[ -e "$repo_dir/setup.py" ]]; then
+        echo_highlight "Detected $repo_dir is a python package. Installing editable..."
+        (
+            cd "$repo_dir" &&
+            source "$VENV_DIR/$venv_name/bin/activate" &&
+            uv pip install --extra-index-url "$PIP_EXTRA_INDEX_URL" --editable .
+            deactivate
+        )
     fi
 
     # Exit early if we can't find requirements file
@@ -80,9 +95,10 @@ bootstrap () {
     (
         cd "$repo_dir" &&
         source "$VENV_DIR/$venv_name/bin/activate" &&
-        pip install --upgrade pip
-        pip install -r requirements.txt &&
-        pip install "$INITIAL_ENV_PACKAGES"
+        for reqs_file in $(find . -name "requirements*" 2>/dev/null); do
+            uv pip install --extra-index-url "$PIP_EXTRA_INDEX_URL" -r "$reqs_file"
+        done
+        uv pip install "$INITIAL_ENV_PACKAGES"
         deactivate
     )
 }
