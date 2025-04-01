@@ -75,16 +75,6 @@ bootstrap () {
         eval "uv venv $VENV_DIR/$venv_name --python $python_version"
     fi
 
-    if [[ -e "$repo_dir/setup.py" ]]; then
-        echo_highlight "Detected $repo_dir is a python package. Installing editable..."
-        (
-            cd "$repo_dir" &&
-            source "$VENV_DIR/$venv_name/bin/activate" &&
-            uv pip install --extra-index-url "$PIP_EXTRA_INDEX_URL" --editable .
-            deactivate
-        )
-    fi
-
     (
         cd "$repo_dir" &&
         source "$VENV_DIR/$venv_name/bin/activate" &&
@@ -93,6 +83,10 @@ bootstrap () {
             uv pip install --extra-index-url "$PIP_EXTRA_INDEX_URL" -r "$reqs_file"
         done
         uv pip install "$INITIAL_ENV_PACKAGES"
+        if [[ -e "setup.py" ]]; then
+            echo_highlight "Detected $repo_dir is a python package. Installing editable..."
+            uv pip install --extra-index-url "$PIP_EXTRA_INDEX_URL" --editable .
+        fi
         deactivate
     )
 }
