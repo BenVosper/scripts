@@ -85,17 +85,11 @@ bootstrap () {
         )
     fi
 
-    # Exit early if we can't find requirements file
-    if [[ ! -e "$repo_dir/requirements.txt" ]]; then
-        echo_highlight "No requirements.txt file found in $repo_dir."
-        return
-    fi
-
-    echo_highlight "Installing python requirements for $repo_dir..."
     (
         cd "$repo_dir" &&
         source "$VENV_DIR/$venv_name/bin/activate" &&
-        for reqs_file in $(find . -name "requirements*" 2>/dev/null); do
+        for reqs_file in $(find . -maxdepth 2 -name "requirements*.txt" -type f 2>/dev/null); do
+            echo_highlight "Installing python requirements for $reqs_file..."
             uv pip install --extra-index-url "$PIP_EXTRA_INDEX_URL" -r "$reqs_file"
         done
         uv pip install "$INITIAL_ENV_PACKAGES"
