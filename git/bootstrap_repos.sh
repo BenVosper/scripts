@@ -46,12 +46,12 @@ bootstrap () {
     venv_name=$3
     python_version=$4
 
-    if [[ -z $(which "uv" 2>\dev\null) ]]; then
+    if [[ -z $(which "uv" 2>/dev/null) ]]; then
         echo_highlight "uv not found. Exiting..."
         exit
     fi
 
-    if [[ -z $(which "python$python_version" 2>\dev\null) ]]; then
+    if [[ -z $(which "python$python_version" 2>/dev/null) ]]; then
         echo_highlight "Python version $python_version not found. Exiting..."
         exit
     fi
